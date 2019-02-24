@@ -24,7 +24,7 @@
 
         <div class="container">
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb"  style="background-color:white">
+                <ol class="breadcrumb"  style="background-color:#fafafa">
                     <li class="breadcrumb-item"><router-link to="/app/dashboard" href="#">Dashboard</router-link></li>
                     <li class="breadcrumb-item"><router-link to="/app/beginner" href="#">Beginner Question</router-link></li>
                     <li class="breadcrumb-item active" aria-current="page">{{question.title}}</li>
@@ -39,7 +39,7 @@
             <h5>Example</h5>
 
             <p class="text-muted" style="font-weight:500;">Input</p>
-            <div class="card" style="width:15em; background-color:#fafafa">
+            <div class="card" style="width:15em; background-color:#eceff1">
                 <div class="card-body">  
                     <p>{{question.testcases[0].stdin}}</p>
                 </div>
@@ -49,7 +49,7 @@
 
             <p class="text-muted" style="font-weight:500;">Output</p>
             
-            <div class="card" style="width:15em; background-color:#fafafa">
+            <div class="card" style="width:15em; background-color:#eceff1">
                 <div class="card-body">     
                     <p>{{question.testcases[0].body}}</p>
                 </div>
@@ -66,7 +66,7 @@
                     <p class="lead">Output</p>
                     
                     <div class="card">
-                        <div class="card-body" style="white-space: pre-line; background-color:#fafafa">
+                        <div class="card-body" style="white-space: pre-line; background-color:#eceff1">
                             {{output.stdout || output.stderr}}
                         </div>
                     </div>
@@ -76,10 +76,13 @@
                     </p>
                     
                     <div class="row">
-                        <div class="col-3" v-for="(testcase, index) in question.testcases" :key="testcase._id">
-                            <div class="card card border-secondary" style="margin-bottom:15px;">
-                                <div class="card-body">
+                        <div class="col-4" v-for="(testcase, index) in question.testcases" :key="testcase._id">
+                            <div class="card card border-success" style="margin-bottom:15px;">
+                                    <div class="card-header">
                                     Testcase {{index+1}}
+                                    </div>
+                                <div class="card-body text-success">
+                                    solved
                                 </div>
                             </div>
                         </div>
@@ -98,7 +101,7 @@
                         </div>
                         <div class="form-group">
                             <p class="lead">Standard Input</p>
-                            <textarea style="background-color:#fafafa;" class="form-control" v-model="code.stdin" rows="5"></textarea>
+                            <textarea style="background-color:#eceff1;" class="form-control" v-model="code.stdin" rows="5"></textarea>
                         </div>
                     </form>
                     <div class="card border-info">
@@ -145,6 +148,9 @@ export default {
     },
     data() {
         return {
+            isloading: true,
+            height: '5',
+            width: '5',
             count: 0,
             question:'',
             item:'',

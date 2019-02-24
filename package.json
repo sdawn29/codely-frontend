@@ -14,6 +14,7 @@
     "vue-css-donut-chart": "^1.0.1",
     "vue-router": "^3.0.1",
     "vue-session": "^1.0.0",
+    "vue-spinners": "^1.0.2",
     "vue2-ace-editor": "0.0.13",
     "vuex": "^3.0.1"
   },

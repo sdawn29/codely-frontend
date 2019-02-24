@@ -22,7 +22,7 @@
         </nav>
         <div class="container" style="margin-top:10px">
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb"  style="background-color:white">
+                <ol class="breadcrumb"  style="background-color:#fafafa">
                     <li class="breadcrumb-item"><router-link to="dashboard" href="#">Dashboard</router-link></li>
                     <li class="breadcrumb-item active" aria-current="page">Sandbox</li>
                 </ol>

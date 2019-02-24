@@ -70,7 +70,7 @@
                                     <div class="row">
                                         <div class="col-7"></div>
                                         <div class="col">
-                                            <router-link to="/app/beginner" class="btn btn-info btn-sm btn-block ">Solve Questionss</router-link>
+                                            <router-link to="/app/beginner" class="btn btn-info btn-sm btn-block ">Solve Questions</router-link>
 
                                         </div>
                                     </div>
@@ -177,7 +177,7 @@
                                 {{question.body}}
                             </p>
                             <div class="row">
-                                <div class="col-1">
+                                <div class="col-2">
                                     <p class="font-weight-bold text-primary">Java</p>
                                 </div>
                                 <div class="col">
