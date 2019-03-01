@@ -30,40 +30,62 @@
                     <li class="breadcrumb-item active" aria-current="page">{{question.title}}</li>
                 </ol>
             </nav>
+            <div class="row">
+                
+                <div class="col-9">
 
-            <h4>{{question.title}}</h4>
-            <p class="lead">
-                {{question.body}}
-            </p>
+                    <div class="card">
+                        <div class="card-body">
 
-            <h5>Example</h5>
+                            <h3>{{question.title}}</h3>
+                            <p class="lead">
+                                {{question.body}}
+                            </p>
 
-            <p class="text-muted" style="font-weight:500;">Input</p>
-            <div class="card" style="width:15em; background-color:#eceff1">
-                <div class="card-body">  
-                    <p>{{question.testcases[0].stdin}}</p>
+                            <h5>Example</h5>
+
+                            <p class="text-muted" style="font-weight:500;">Input</p>
+                            <div class="card" style="width:15em; background-color:#eceff1">
+                                <div class="card-body">  
+                                    <p>{{question.testcases[0].stdin}}</p>
+                                </div>
+                            </div>
+
+                            <br>
+
+                            <p class="text-muted" style="font-weight:500;">Output</p>
+                            
+                            <div class="card" style="width:15em; background-color:#eceff1">
+                                <div class="card-body">     
+                                    <p>{{question.testcases[0].body}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                
+
+                <div class="col-3">
+                    <div class="card card-body">
+                        <div class="">
+                            <h5>Difficulty</h5>
+                            <p class="text-warning">Intermediate</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <br>
-
-            <p class="text-muted" style="font-weight:500;">Output</p>
-            
-            <div class="card" style="width:15em; background-color:#eceff1">
-                <div class="card-body">     
-                    <p>{{question.testcases[0].body}}</p>
-                </div>
-            </div>
             <br>
             <h5>Write your code down below.</h5>
             <br>
             <div class="row">
                 <div class="col-9">
                     <div class="card">
-                        <editor v-model="code.body" @init="editorInit" :lang="lang" theme="chrome" width="100%" height="608"></editor>
+                        <editor v-model="code.body" @init="editorInit" :lang="lang" theme="chrome" width="100%" height="578"></editor>
                     </div>
                     <br>
-                    <p class="lead">Output</p>
+                    <h5>Output</h5>
                     
                     <div class="card">
                         <div class="card-body" style="white-space: pre-line; background-color:#eceff1">
@@ -71,9 +93,9 @@
                         </div>
                     </div>
                     <br>
-                    <p class="lead">
+                    <h5>
                         Compiling with all test cases
-                    </p>
+                    </h5>
                     
                     <div class="row">
                         <div class="col-4" v-for="(testcase, index) in question.testcases" :key="testcase._id">
@@ -93,14 +115,14 @@
                 <div class="col-3">
                      <form>
                         <div class="form-group">
-                            <p class="lead">Language</p>
+                            <h5>Language</h5>
                             <select class="form-control" v-model="item" @change="selectLanguage(item)">
                                 <option value="">Choose a language</option>
                                 <option :value="choice" v-for="choice in items" :key="choice.lang">{{choice.lang}}</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <p class="lead">Standard Input</p>
+                            <h5>Standard Input</h5>
                             <textarea style="background-color:#eceff1;" class="form-control" v-model="code.stdin" rows="5"></textarea>
                         </div>
                     </form>
@@ -111,19 +133,19 @@
                     </div>
                     <br>
                     <button type="button" @click="compile" class="btn btn-secondary btn-block">Run code</button>
-                    <button type="button" @click="submission" class="btn btn-primary btn-block">Submit code</button>
+                    <button type="button" @click="submission" class="btn btn-success btn-block">Submit code</button>
                     
                     
                     
                     <br>
-                    <p class="lead">Time taken (in s)</p>
+                    <h5>Time taken (in s)</h5>
                     <div class="card">
                         <div class="card-body">
                             {{output.cpuUsage * 0.000001}}
                         </div>
                     </div>
                     <br>
-                    <p class="lead">Memory used (in KB)</p>
+                    <h5>Memory used (in KB)</h5>
                     <div class="card">
                         <div class="card-body">
                             {{output.memoryUsage * 0.001}}
@@ -131,6 +153,12 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div v-for="data in solvedTestcase" :key="data.memoryUsage">
+            <h5>
+                {{data}}
+            </h5>
         </div>
     </div>
 </template>
@@ -172,6 +200,8 @@ export default {
 
             output: '',
             theme:'',
+
+            solvedTestcase: [],
         }
     },
     components: {
@@ -235,22 +265,27 @@ export default {
         },
 
         submission() {
-            this.code.stdin = this.question.testcases[0].stdin
-            const uri = 'http://localhost:4000/api/prog';
-            let h = new Headers();
-            h.append('Content-Type', 'application/json')
-            // h.append('x-auth-token', this.token);
+            this.solvedTestcase = [];
+            for(var index in this.question.testcases){
 
-            let req = new Request(uri, {
-                method: 'POST',
-                headers: h,
-                body: JSON.stringify(this.code)
-            });
-            fetch(req)
-                .then(res => res.json())
-                .then(res => {
-                    this.output = res.data;
-                })
+                this.code.stdin = this.question.testcases[index].stdin
+                const uri = 'http://localhost:4000/api/prog';
+                let h = new Headers();
+                h.append('Content-Type', 'application/json')
+                // h.append('x-auth-token', this.token);
+    
+                let req = new Request(uri, {
+                    method: 'POST',
+                    headers: h,
+                    body: JSON.stringify(this.code)
+                });
+                fetch(req)
+                    .then(res => res.json())
+                    .then(res => {
+                        this.solvedTestcase.push(res.data);
+                        console.log(res.data);
+                    })
+            }
         }
     }
 }

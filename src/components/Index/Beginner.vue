@@ -108,5 +108,7 @@ export default {
 <style scoped>
 .card-custom:hover {
     border: 1px solid grey;
+    /* background-color: #f5f5f5; */
+
 }
 </style>

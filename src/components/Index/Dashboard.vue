@@ -177,10 +177,10 @@
                                 {{question.body}}
                             </p>
                             <div class="row">
-                                <div class="col-2">
+                                <div class="col-1">
                                     <p class="font-weight-bold text-primary">Java</p>
                                 </div>
-                                <div class="col">
+                                <div class="col-11">
                                     <span class="badge badge-success" style="padding:7px;" v-if="question.difficulty==0">
                                         Beginner
                                     </span>
