@@ -98,13 +98,32 @@
                     </h5>
                     
                     <div class="row">
-                        <div class="col-4" v-for="(testcase, index) in question.testcases" :key="testcase._id">
-                            <div class="card card border-success" style="margin-bottom:15px;">
+                        <div class="col-4" v-for="(data,index) in solvedTestcase" :key="data.sNo">
+                            <div class="card card border-success" style="margin-bottom:15px;" v-if="data.status === 'solved'">
                                     <div class="card-header">
                                     Testcase {{index+1}}
                                     </div>
-                                <div class="card-body text-success">
-                                    solved
+                                <div class="card-body text-success row">
+                                    <span class="col-10">
+                                        Solved. 
+                                    </span>
+                                    <span class="col-2">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="card card-testcase card border-danger" style="margin-bottom:15px;" v-if="data.status === 'failed'" @click="viewTestcase()"> 
+                                    <div class="card-header">
+                                    Testcase {{index+1}}
+                                    </div>
+                                <div class="card-body text-danger row" v-if="!info">
+                                    <span class="col-10">
+                                        Failed.
+                                    </span>
+                                    <span class="col-2">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -155,11 +174,12 @@
             </div>
         </div>
 
-        <div v-for="data in solvedTestcase" :key="data.memoryUsage">
+        <div v-for="data in solvedTestcase" :key="data.sNo">
             <h5>
                 {{data}}
             </h5>
         </div>
+        
     </div>
 </template>
 
@@ -176,6 +196,7 @@ export default {
     },
     data() {
         return {
+            info: false,
             isloading: true,
             height: '5',
             width: '5',
@@ -208,6 +229,12 @@ export default {
         editor: require('vue2-ace-editor'),
     },
     methods: {
+
+        viewTestcase() {
+            this.info = true;
+            console.log("this is clicked")
+        },
+
         getQuestion(id) {
             const uri = 'http://localhost:4000/api/questions/'+id;
             let h = new Headers();
@@ -266,9 +293,10 @@ export default {
 
         submission() {
             this.solvedTestcase = [];
-            for(var index in this.question.testcases){
+            for(const index in this.question.testcases){
 
                 this.code.stdin = this.question.testcases[index].stdin
+                const expectedResult = this.question.testcases[index].body
                 const uri = 'http://localhost:4000/api/prog';
                 let h = new Headers();
                 h.append('Content-Type', 'application/json')
@@ -282,8 +310,14 @@ export default {
                 fetch(req)
                     .then(res => res.json())
                     .then(res => {
-                        this.solvedTestcase.push(res.data);
-                        console.log(res.data);
+                        
+                        var result = res.data.stdout;
+                        if( result === expectedResult) {
+
+                            this.solvedTestcase.push({sNo : index , status: "solved", result: result, expected: expectedResult });
+                        } else {
+                            this.solvedTestcase.push({sNo : index , status: "failed", result: result, expected: expectedResult });
+                        }
                     })
             }
         }
@@ -291,6 +325,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.card-testcase:hover {
+    cursor: pointer;
+}
 </style>
 
