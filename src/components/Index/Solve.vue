@@ -26,7 +26,9 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb"  style="background-color:#fafafa">
                     <li class="breadcrumb-item"><router-link to="/app/dashboard" href="#">Dashboard</router-link></li>
-                    <li class="breadcrumb-item"><router-link to="/app/beginner" href="#">Beginner Question</router-link></li>
+                    <li class="breadcrumb-item" v-if="question.difficulty == 0"><router-link to="/app/beginner" href="#">Beginner Question</router-link></li>
+                    <li class="breadcrumb-item" v-if="question.difficulty == 1"><router-link to="/app/intermediate" href="#">Intermediate Question</router-link></li>
+                    <li class="breadcrumb-item" v-if="question.difficulty == 2"><router-link to="/app/expert" href="#">Expert Question</router-link></li>
                     <li class="breadcrumb-item active" aria-current="page">{{question.title}}</li>
                 </ol>
             </nav>
@@ -45,8 +47,8 @@
                             <h5>Example</h5>
 
                             <p class="text-muted" style="font-weight:500;">Input</p>
-                            <div class="card" style="width:15em; background-color:#eceff1">
-                                <div class="card-body">  
+                            <div class="card" style="width:15em; background-color:#eceff1;white-space: pre-line">
+                                <div class="card-body codeFont">  
                                     <p>{{question.testcases[0].stdin}}</p>
                                 </div>
                             </div>
@@ -55,8 +57,8 @@
 
                             <p class="text-muted" style="font-weight:500;">Output</p>
                             
-                            <div class="card" style="width:15em; background-color:#eceff1">
-                                <div class="card-body">     
+                            <div class="card" style="width:15em; background-color:#eceff1;white-space: pre-line">
+                                <div class="card-body codeFont">     
                                     <p>{{question.testcases[0].body}}</p>
                                 </div>
                             </div>
@@ -68,10 +70,20 @@
 
                 <div class="col-3">
                     <div class="card card-body">
-                        <div class="">
+                        <div>
                             <h5>Difficulty</h5>
-                            <p class="text-warning">Intermediate</p>
+                            <span class="badge badge-success" style="padding:7px;" v-if="question.difficulty==0">
+                                Beginner
+                            </span>
+                            <span class="badge badge-warning" style="padding:7px;" v-if="question.difficulty==1">
+                                Intermediate
+                            </span>
+                            <span class="badge badge-danger" style="padding:7px;" v-if="question.difficulty==2">
+                                Expert
+                            </span>
                         </div>
+                        <br>
+                        <button type="button" class="btn btn-block btn-secondary">Discussions</button>
                     </div>
                 </div>
             </div>
@@ -85,50 +97,89 @@
                         <editor v-model="code.body" @init="editorInit" :lang="lang" theme="chrome" width="100%" height="578"></editor>
                     </div>
                     <br>
-                    <h5>Output</h5>
-                    
-                    <div class="card">
-                        <div class="card-body" style="white-space: pre-line; background-color:#eceff1">
-                            {{output.stdout || output.stderr}}
-                        </div>
-                    </div>
-                    <br>
-                    <h5>
-                        Compiling with all test cases
-                    </h5>
-                    
-                    <div class="row">
-                        <div class="col-4" v-for="(data,index) in solvedTestcase" :key="data.sNo">
-                            <div class="card card border-success" style="margin-bottom:15px;" v-if="data.status === 'solved'">
-                                    <div class="card-header">
-                                    Testcase {{index+1}}
-                                    </div>
-                                <div class="card-body text-success row">
-                                    <span class="col-10">
-                                        Solved. 
-                                    </span>
-                                    <span class="col-2">
-                                        <i class="fas fa-check"></i>
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="card card-testcase card border-danger" style="margin-bottom:15px;" v-if="data.status === 'failed'" @click="viewTestcase()"> 
-                                    <div class="card-header">
-                                    Testcase {{index+1}}
-                                    </div>
-                                <div class="card-body text-danger row" v-if="!info">
-                                    <span class="col-10">
-                                        Failed.
-                                    </span>
-                                    <span class="col-2">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                    </span>
-                                </div>
+                    <div v-if="!submitClicked">
+                        <h5>Output</h5>
+                        
+                        <div class="card bg-secondary text-white">
+                            <div class="card-body" style="white-space: pre;">
+                                <h6 class="codeFont">{{output.stdout || output.stderr}}</h6>
                             </div>
                         </div>
                     </div>
+                    <div v-if="submitClicked">
+                        <h5>
+                            Compiling with all test cases
+                        </h5>
+                        
+                        <div class="row">
+                            <div class="col-4" v-for="(data,index) in solvedTestcase" :key="data.sNo">
+                                <div class="card card border-success" style="margin-bottom:15px;" v-if="data.status === 'solved'">
+                                        <div class="card-header">
+                                        <h6>Testcase {{index+1}}</h6>
+                                        </div>
+                                    <div class="card-body text-success row">
+                                        <span class="col-10">
+                                            Solved. 
+                                        </span>
+                                        <span class="col-2">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                                    </div>
+                                </div>
 
+                                <div class="card card border-danger" style="margin-bottom:15px;" v-if="data.status === 'failed'"> 
+                                        <div class="card-header">
+                                        <h6>Testcase {{index+1}}</h6>
+                                        </div>
+                                    <div class="card-body text-danger row">
+                                        <span class="col-10">
+                                            Failed.
+                                        </span>
+                                        <span class="col-2">
+                                            <popper
+                                                trigger="hover"
+                                                :options="{
+                                                placement: 'top',
+                                                modifiers: { offset: { offset: '0, 10px' } }
+                                                }">
+                                                <div class="card border-secondary" style="z-index:20000;">
+                                                    <div class="card-header">
+                                                        <h6 class="text-dark">Info.</h6>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <h6 class="text-muted">Standard Input</h6>
+                                                        <div class="card text-white bg-secondary codeFont" style="width:200px;padding:10px;white-space: pre-line">{{ data.expected.stdin }}</div>
+                                                        <h6 class="text-muted">Expected Output</h6>
+                                                        <div class="card text-white bg-secondary codeFont" style="width:200px;padding:10px;white-space: pre-line">{{ data.expected.body }}</div>
+                                                        <h6 class="text-muted">Hint.</h6>
+                                                        <div class="card text-white bg-info" style="width:200px;padding:10px;">{{ data.expected.desc }}</div>
+                                                    </div>
+                                                    
+                                                </div>
+                                                <i slot="reference" class="fas fa-exclamation-triangle"></i>
+                                            </popper>
+                                        </span>
+                                    </div>
+                                </div>    
+                            </div>
+                            <div class="col-4" v-if="solvedTestcaseCount != question.testcases.length && solvedTestcaseCount != 0">
+                                <div class="card text-white bg-danger" >
+                                    <div class="card-header">{{  solvedTestcaseCount }}/{{ question.testcases.length }} correct</div>
+                                    <div class="card-body">
+                                        <h6>Please Try again</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4"  v-if="solvedTestcaseCount == question.testcases.length">
+                                <div class="card text-white bg-success">
+                                    <div class="card-header">All testcases passed</div>
+                                    <div class="card-body">
+                                        <button class="btn btn-block btn-lg btn-success">Continue <i class="fas fa-arrow-circle-right"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
    
                 </div>
                 <div class="col-3">
@@ -173,19 +224,16 @@
                 </div>
             </div>
         </div>
-
-        <div v-for="data in solvedTestcase" :key="data.sNo">
-            <h5>
-                {{data}}
-            </h5>
-        </div>
-        
     </div>
 </template>
 
 <script>
-export default {
+import Popper from 'vue-popperjs';
+import 'vue-popperjs/dist/vue-popper.css';
 
+export default {
+      
+    
     created() {
         this.getQuestion(this.$route.params.qid);
     },
@@ -196,8 +244,7 @@ export default {
     },
     data() {
         return {
-            info: false,
-            isloading: true,
+            submitClicked: false,
             height: '5',
             width: '5',
             count: 0,
@@ -223,17 +270,14 @@ export default {
             theme:'',
 
             solvedTestcase: [],
+            solvedTestcaseCount: 0,
         }
     },
     components: {
         editor: require('vue2-ace-editor'),
+        'popper': Popper,
     },
     methods: {
-
-        viewTestcase() {
-            this.info = true;
-            console.log("this is clicked")
-        },
 
         getQuestion(id) {
             const uri = 'http://localhost:4000/api/questions/'+id;
@@ -273,6 +317,7 @@ export default {
         },
 
         compile() {
+            this.submitClicked = false
             this.loading=true;
             const uri = 'http://localhost:4000/api/prog';
             let h = new Headers();
@@ -292,11 +337,13 @@ export default {
         },
 
         submission() {
+            this.solvedTestcaseCount = 0
+            this.submitClicked = true
             this.solvedTestcase = [];
             for(const index in this.question.testcases){
 
                 this.code.stdin = this.question.testcases[index].stdin
-                const expectedResult = this.question.testcases[index].body
+                const expectedResult = this.question.testcases[index]
                 const uri = 'http://localhost:4000/api/prog';
                 let h = new Headers();
                 h.append('Content-Type', 'application/json')
@@ -312,22 +359,24 @@ export default {
                     .then(res => {
                         
                         var result = res.data.stdout;
-                        if( result === expectedResult) {
-
+                        if( result === expectedResult.body) {
+                            this.solvedTestcaseCount++;
                             this.solvedTestcase.push({sNo : index , status: "solved", result: result, expected: expectedResult });
                         } else {
                             this.solvedTestcase.push({sNo : index , status: "failed", result: result, expected: expectedResult });
                         }
                     })
             }
-        }
+        },
     }
 }
 </script>
 
 <style scoped>
-.card-testcase:hover {
-    cursor: pointer;
+@import url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono:700');
+
+.codeFont {
+    font-family: 'IBM Plex Mono', monospace;
 }
 </style>
 

@@ -21,14 +21,7 @@
             </div>
         </nav>
         <div class="container">
-            <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link active" href="#">Questions</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Discussions</a>
-            </li>
-            </ul>
+            <router-view/>
         </div>
     </div>
 </template>

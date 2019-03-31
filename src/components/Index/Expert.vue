@@ -25,13 +25,13 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb"  style="background-color:#fafafa">
                     <li class="breadcrumb-item"><router-link to="dashboard" href="#">Dashboard</router-link></li>
-                    <li class="breadcrumb-item active" aria-current="page">Beginner Questions</li>
+                    <li class="breadcrumb-item active" aria-current="page">Expert Questions</li>
                 </ol>
             </nav>
 
-            <p class="lead">Beginner Questions</p>
+            <p class="lead">Expert Questions</p>
             <div v-for="question in questions" :key="question._is">
-                <div class="card card-custom card-body" v-if="question.difficulty==0">
+                <div class="card card-custom card-body" v-if="question.difficulty==2">
 
                     <div class="row">
                         <div class="col-10">

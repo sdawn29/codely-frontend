@@ -104,7 +104,7 @@
                                     <div class="row">
                                         <div class="col-7"></div>
                                         <div class="col">
-                                            <button type="button" class="btn btn-info btn-sm btn-block">Solve questions</button>
+                                                                                        <router-link to="/app/intermediate" class="btn btn-info btn-sm btn-block ">Solve Questions</router-link>
 
                                         </div>
                                     </div>
@@ -140,7 +140,8 @@
                                     <div class="row">
                                         <div class="col-7"></div>
                                         <div class="col">
-                                            <button type="button" class="btn btn-info btn-sm btn-block">Solve questions</button>
+                                            <router-link to="/app/expert" class="btn btn-info btn-sm btn-block ">Solve Questions</router-link>
+
 
                                         </div>
                                     </div>
